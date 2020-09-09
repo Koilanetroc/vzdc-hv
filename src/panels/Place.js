@@ -106,7 +106,7 @@ const Place = ({ item, order, onIncrementPosition, onDecrementPosition, area }) 
             pathname: `/basket/${area.id}/${item.id}`,
             state: location.state,
           }}
-          className={cn('Place__order', {'disabled': price == '0'})}
+          className={cn('Place__order', {'disabled': price === '0'})}
         >
           Оформить заказ ({price})
         </Link>
