@@ -24,3 +24,12 @@
   background-color: #4bb34b;
   color: #fff;
 }
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+a {
+  transition: 0.2s ease-in;
+}

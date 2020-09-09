@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import accounting from 'accounting';
+import cn from 'classnames'
 
 import Checkbox from './Checkbox';
-
+import isEmptyObject from '../utils/isEmptyObject';
 import edit from '../img/edit.svg';
 import './place.css';
 
@@ -147,7 +148,10 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
         </div>
       </div>
       <footer className="Place__footer">
-        <Link to={`/order/${area.id}/${item.id}`} className="Place__order">
+        <Link
+          to={`/order/${area.id}/${item.id}`} 
+          className={cn('Place__order', {'disabled': isEmptyObject(order)})}
+        >
           Оплатить {price}
         </Link>
       </footer>

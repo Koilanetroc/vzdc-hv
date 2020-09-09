@@ -3,9 +3,10 @@ import { Link, withRouter } from 'react-router-dom';
 
 import edit from '../img/edit.svg';
 import './place.css';
+import isEmptyObject from '../utils/isEmptyObject';
 
 
-const Order = ({ match: { params: { areaId, itemId }}, history, foodAreas, setActiveOrder }) => {
+const Order = ({ match: { params: { areaId, itemId }}, history, foodAreas, setActiveOrder }, order) => {
   const area = foodAreas.filter(area => area.id === areaId)[0];
   const item = area.items.filter(item => item.id === itemId)[0];
 
@@ -60,7 +61,9 @@ const Order = ({ match: { params: { areaId, itemId }}, history, foodAreas, setAc
           to="/orders" 
           className="Place__order"
           onClick={() => {
-            setActiveOrder({ itemId });
+            if (!isEmptyObject(order)) {
+              setActiveOrder({ itemId });
+            }
 
             setTimeout(() => {
               history.push('/orders');
