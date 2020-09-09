@@ -1,21 +1,24 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter, Link, useLocation, useHistory } from 'react-router-dom';
 import accounting from 'accounting';
 import cn from 'classnames'
 
 import Checkbox from './Checkbox';
-import isEmptyObject from '../utils/isEmptyObject';
 import edit from '../img/edit.svg';
 import './place.css';
 
-
 const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
+  const location = useLocation();
+  const history = useHistory();
   const [ faster, setFaster ] = useState(true);
   const [ time, setTime ] = useState('');
   const [ selfService, setSelfService ] = useState(false);
   const area = foodAreas.filter(area => area.id === areaId)[0];
   const item = area.items.filter(item => item.id === itemId)[0];
 
+  /**
+   * Update time effect.
+   */
   useEffect(() => {
     if (!faster) {
       const currentDate = new Date()
@@ -25,6 +28,28 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
       setTime('')
     }
   }, [faster])
+
+  useEffect(() => {
+    if (location.state && location.state.saveSettings) {
+      const orderSettings = localStorage.getItem('orderSettings');
+      const parsedSettings = JSON.parse(orderSettings);
+
+      setFaster(parsedSettings.faster)
+      setTime(parsedSettings.time)
+      setSelfService(parsedSettings.selfService)
+      history.replace({ ...history.location, state: { saveSettings:false } });
+    }
+  }, [])
+
+  useEffect(() => {
+    const orderSettings = {
+      faster,
+      time,
+      selfService,
+    };
+
+    localStorage.setItem('orderSettings', JSON.stringify(orderSettings));
+  }, [faster, time, selfService])
 
   const [ price, products ] = useMemo(() => {
     const foodIds = new Set((item.foods || []).map(item => item.id));
@@ -109,7 +134,10 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
         </ul>
         <Link
           className="Place__change-product"
-          to={`/place/${areaId}/${itemId}`}
+          to={{
+            pathname: `/place/${areaId}/${itemId}`,
+            state: { saveSettings: true }
+          }}
         >
           Изменить
         </Link>
@@ -160,7 +188,7 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
       <footer className="Place__footer">
         <Link
           to={`/order/${area.id}/${item.id}`} 
-          className={cn('Place__order', {'disabled': isEmptyObject(order)})}
+          className={cn('Place__order', {'disabled': price == '0'})}
         >
           Оплатить {price}
         </Link>

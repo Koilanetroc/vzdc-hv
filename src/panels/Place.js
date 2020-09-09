@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import accounting from 'accounting';
 import cn from 'classnames'
 
 import edit from '../img/edit.svg';
 import './place.css';
-import isEmptyObject from '../utils/isEmptyObject';
-
 
 const Place = ({ item, order, onIncrementPosition, onDecrementPosition, area }) => {
+  const location = useLocation();
   const price = useMemo(() => {
     const foodIds = new Set((item.foods || []).map(item => item.id));
 
@@ -103,8 +102,11 @@ const Place = ({ item, order, onIncrementPosition, onDecrementPosition, area }) 
       </ul>
       <footer className="Place__footer">
         <Link 
-          to={`/basket/${area.id}/${item.id}`}
-          className={cn('Place__order', {'disabled': isEmptyObject(order)})}
+          to={{
+            pathname: `/basket/${area.id}/${item.id}`,
+            state: location.state,
+          }}
+          className={cn('Place__order', {'disabled': price == '0'})}
         >
           Оформить заказ ({price})
         </Link>
