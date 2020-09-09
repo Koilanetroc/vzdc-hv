@@ -9,7 +9,6 @@ import isEmptyObject from '../utils/isEmptyObject';
 
 
 const Place = ({ item, order, onIncrementPosition, onDecrementPosition, area }) => {
-  console.log(order);
   const price = useMemo(() => {
     const foodIds = new Set((item.foods || []).map(item => item.id));
 

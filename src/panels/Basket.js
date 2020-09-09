@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import accounting from 'accounting';
 import cn from 'classnames'
@@ -15,6 +15,16 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
   const [ selfService, setSelfService ] = useState(false);
   const area = foodAreas.filter(area => area.id === areaId)[0];
   const item = area.items.filter(item => item.id === itemId)[0];
+
+  useEffect(() => {
+    if (!faster) {
+      const currentDate = new Date()
+      const currentTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`
+      setTime(currentTime);
+    } else {
+      setTime('')
+    }
+  }, [faster])
 
   const [ price, products ] = useMemo(() => {
     const foodIds = new Set((item.foods || []).map(item => item.id));
@@ -114,7 +124,6 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
               if (faster) {
                 setFaster(false);
               } else {
-                setTime('');
                 setFaster(true);
               }
             }}
